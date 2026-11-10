@@ -1,0 +1,2212 @@
+<!DOCTYPE html>
+<html class="scroll-smooth dark" lang="ru">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<meta name="color-scheme" content="light dark">
+<meta name="format-detection" content="telephone=no">
+<meta content="#050608" id="theme-color-meta" name="theme-color">
+<meta content="yes" name="apple-mobile-web-app-capable">
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style">
+<title>Калькулятор рассрочки</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&amp;family=Plus+Jakarta+Sans:wght@400..800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script>
+    (function() {
+        const manual = localStorage.getItem('finisland_theme_manual');
+        let isDark = true;
+        if (manual === 'dark') {
+            isDark = true;
+        } else if (manual === 'light') {
+            isDark = false;
+        } else {
+            isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    })();
+</script>
+<style>
+    /* CSS Reset & Base */
+    *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+        --bg-body: #dfe3e8;
+        --text-body: #18181b;
+        --orb-1: rgba(225, 175, 65, 0.42);
+        --orb-2: rgba(245, 205, 95, 0.35);
+        --orb-3: rgba(215, 160, 50, 0.30);
+        --track-unfilled: rgba(0, 0, 0, 0.08);
+        --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.42) 100%);
+        --card-border: rgba(255, 255, 255, 0.90);
+        --accent-gold: #d4af37;
+        --block-gap: 0.75rem;
+        --layout-max-width: 580px;
+        --layout-padding-x: 1rem;
+        color-scheme: light dark;
+        scrollbar-color: rgba(180, 140, 50, 0.35) transparent;
+    }
+    
+    .dark {
+        --bg-body: #050608;
+        --text-body: #f4f5f7;
+        --orb-1: rgba(212, 175, 55, 0.14);
+        --orb-2: rgba(246, 226, 122, 0.09);
+        --orb-3: rgba(180, 130, 30, 0.10);
+        --track-unfilled: rgba(255, 255, 255, 0.12);
+        --card-bg: linear-gradient(135deg, rgba(20, 25, 36, 0.64) 0%, rgba(11, 14, 21, 0.70) 100%);
+        --card-border: rgba(212, 175, 55, 0.28);
+        --accent-gold: #f6e27a;
+        color-scheme: dark;
+        scrollbar-color: rgba(212, 175, 55, 0.35) transparent;
+    }
+
+    @media (min-width: 768px) {
+        :root {
+            --block-gap: 0.875rem;
+            --layout-max-width: 860px;
+            --layout-padding-x: 1.5rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        :root {
+            --block-gap: 1.05rem;
+            --layout-max-width: 1040px;
+            --layout-padding-x: 1.75rem;
+        }
+    }
+
+    @media (min-width: 1280px) {
+        :root {
+            --block-gap: 1.15rem;
+            --layout-max-width: 1100px;
+            --layout-padding-x: 2rem;
+        }
+    }
+
+    html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        scrollbar-gutter: stable;
+        overflow-y: auto;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-body);
+        min-height: 100vh;
+        position: relative;
+        touch-action: manipulation;
+        padding-bottom: env(safe-area-inset-bottom);
+        transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* Ambient Background Glow Layer */
+    .bg-ambient {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: -1;
+        background-color: var(--bg-body);
+        background-image: 
+            radial-gradient(circle at 15% 15%, var(--orb-1) 0%, transparent 55%),
+            radial-gradient(circle at 85% 45%, var(--orb-2) 0%, transparent 50%),
+            radial-gradient(circle at 50% 85%, var(--orb-3) 0%, transparent 60%);
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        will-change: transform;
+        transition: background-color 0.25s ease, background-image 0.25s ease;
+    }
+
+    button, input, select, a {
+        touch-action: manipulation;
+        font-family: inherit;
+    }
+    
+    .cursor-pointer {
+        cursor: pointer;
+    }
+    
+    h1, h2, h3, h4, h5, h6 { 
+        font-family: 'Manrope', sans-serif; 
+    }
+
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        display: inline-block;
+        line-height: 1;
+        vertical-align: middle;
+        user-select: none;
+    }
+
+    /* Range Slider Styling (Pure white center for thumb in all modes) */
+    input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 5px;
+        border-radius: 9999px;
+        outline: none;
+        touch-action: none;
+        cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background: #ffffff !important;
+        border: 2.5px solid #d4af37;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(180, 140, 40, 0.35), 0 0 10px rgba(246, 226, 122, 0.45);
+        transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dark input[type="range"]::-webkit-slider-thumb {
+        background: #ffffff !important;
+        border-color: #d4af37;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), 0 0 10px rgba(212, 175, 55, 0.4);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover, 
+    input[type="range"]::-webkit-slider-thumb:active {
+        transform: scale(1.18);
+        box-shadow: 0 3px 12px rgba(180, 130, 20, 0.45), 0 0 14px rgba(246, 226, 122, 0.7);
+        border-color: #f6e27a;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background: #ffffff !important;
+        border: 2.5px solid #d4af37;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(180, 140, 40, 0.35);
+        transition: transform 0.15s ease;
+    }
+
+    .dark input[type="range"]::-moz-range-thumb {
+        background: #ffffff !important;
+        border-color: #d4af37;
+    }
+
+    /* Segmented Tab Buttons (Glassmorphism Frosted Pill) */
+    .tab-toggle-container {
+        padding: 3px;
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(195, 155, 75, 0.35);
+        border-radius: 0.85rem;
+        width: 200px;
+        min-width: 200px;
+        max-width: 200px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.85);
+        transition: background-color 0.25s ease, border-color 0.25s ease;
+        position: relative;
+    }
+    .dark .tab-toggle-container {
+        background: rgba(18, 22, 32, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(212, 175, 55, 0.28);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+    .tab-pill-bg {
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        left: 3px;
+        width: calc(50% - 3px);
+        border-radius: 0.65rem;
+        background: linear-gradient(135deg, #f7dc78, #d4af37, #b08218);
+        box-shadow: 0 2px 8px rgba(180, 130, 20, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.7);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .tab-btn {
+        color: #6b645b;
+        opacity: 0.75;
+        font-weight: 600;
+        font-size: 0.72rem;
+        padding: 0.35rem 0.35rem;
+        border-radius: 0.65rem;
+        cursor: pointer;
+        transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: transparent;
+        border: none;
+        outline: none !important;
+        white-space: nowrap;
+        text-align: center;
+    }
+
+    .tab-btn:focus,
+    .tab-btn:focus-visible {
+        outline: none !important;
+    }
+
+    .dark .tab-btn {
+        color: rgba(255, 255, 255, 0.68);
+        opacity: 0.75;
+    }
+
+    .tab-btn.active {
+        color: #1a1205 !important;
+        opacity: 1 !important;
+        font-weight: 800 !important;
+    }
+
+    .dark .tab-btn.active {
+        color: #0c0a06 !important;
+        opacity: 1 !important;
+        font-weight: 800 !important;
+    }
+
+    .calc-main-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        line-height: 1.18;
+        text-align: left;
+        margin: 0;
+    }
+    @media (min-width: 640px) {
+        .calc-main-title {
+            font-size: 1.35rem;
+        }
+    }
+
+    /* Calculator Main Container & Flow */
+    .calculator-layout {
+        width: 100%;
+        max-width: var(--layout-max-width);
+        margin: 0 auto;
+        padding-left: var(--layout-padding-x);
+        padding-right: var(--layout-padding-x);
+        padding-top: 0.85rem;
+        padding-bottom: 3rem;
+        box-sizing: border-box;
+    }
+    @media (min-width: 768px) {
+        .calculator-layout {
+            padding-top: 2rem;
+            padding-bottom: 4rem;
+        }
+    }
+    @media (min-width: 1024px) {
+        .calculator-layout {
+            padding-top: 2.75rem;
+            padding-bottom: 5rem;
+        }
+    }
+
+    /* Unified vertical flow with identical gaps */
+    .calc-flow {
+        display: flex;
+        flex-direction: column;
+        gap: var(--block-gap);
+        width: 100%;
+    }
+
+    .calc-inputs-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--block-gap);
+        width: 100%;
+    }
+    @media (min-width: 768px) {
+        .calc-inputs-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    /* Silky Smooth Down Payment Accordion */
+    .down-payment-wrapper {
+        display: grid;
+        grid-template-rows: 0fr;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: grid-template-rows 0.38s cubic-bezier(0.16, 1, 0.3, 1), 
+                    opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+                    margin-top 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow: hidden;
+        margin-top: calc(-1 * var(--block-gap));
+        width: 100%;
+    }
+
+    .down-payment-wrapper.open {
+        grid-template-rows: 1fr;
+        opacity: 1;
+        transform: translateY(0);
+        margin-top: 0;
+    }
+
+    .down-payment-inner {
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    /* Results Dashboard Grid (4 Cards: Monthly, Discount, Markup, Total) */
+    .calc-results-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--block-gap);
+        width: 100%;
+    }
+    @media (min-width: 768px) {
+        .calc-results-grid {
+            grid-template-columns: 1.15fr 1fr 1fr 1fr;
+        }
+    }
+
+    .calc-sub-results {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--block-gap);
+    }
+    @media (max-width: 580px) {
+        .calc-sub-results {
+            grid-template-columns: 1fr 1fr;
+        }
+        .calc-sub-results > *:last-child {
+            grid-column: span 2;
+        }
+    }
+    @media (min-width: 768px) {
+        .calc-sub-results {
+            display: contents;
+        }
+    }
+
+    /* Frosted Glass Panels */
+    .glass-panel {
+        background: var(--card-bg);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1.5px solid var(--card-border);
+        box-shadow: 0 6px 20px -2px rgba(160, 135, 75, 0.08), 0 2px 6px rgba(0, 0, 0, 0.02), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .dark .glass-panel {
+        background: var(--card-bg);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid var(--card-border);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+    }
+
+    .glass-panel:hover {
+        border-color: rgba(212, 175, 55, 0.50);
+        box-shadow: 0 10px 28px rgba(212, 175, 55, 0.12), inset 0 1px 1px rgba(255, 255, 255, 1);
+    }
+
+    .dark .glass-panel:hover {
+        border-color: rgba(212, 175, 55, 0.50);
+        box-shadow: 0 10px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    /* Highlight Card (Monthly Payment) */
+    .highlight-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(254, 248, 230, 0.65) 100%);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1.5px solid rgba(225, 190, 110, 0.65);
+        box-shadow: 0 8px 24px -2px rgba(212, 175, 55, 0.18), inset 0 1px 2px rgba(255, 255, 255, 1);
+        border-radius: 20px;
+        transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .dark .highlight-card {
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.20) 0%, rgba(18, 23, 34, 0.74) 100%);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1.5px solid rgba(246, 226, 122, 0.50);
+        box-shadow: 0 10px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.14), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+    }
+
+    /* Result Stat Cards Unified Clean Geometry */
+    .result-stat-card {
+        padding: 0.95rem 1.15rem;
+        min-height: 5.6rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-sizing: border-box;
+    }
+
+    .result-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.25rem;
+    }
+
+    .result-watermark-icon {
+        position: absolute;
+        right: 0.65rem;
+        bottom: -0.35rem;
+        font-size: 3.85rem !important;
+        opacity: 0.08;
+        color: #b89035;
+        pointer-events: none;
+        user-select: none;
+        transform: rotate(-8deg);
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .dark .result-watermark-icon {
+        opacity: 0.11;
+        color: #f6e27a;
+    }
+
+    .highlight-card:hover .result-watermark-icon,
+    .glass-panel:hover .result-watermark-icon {
+        transform: rotate(0deg) scale(1.08);
+        opacity: 0.16;
+    }
+
+    /* Input Badges */
+    
+    .calc-text-input {
+        background: transparent;
+        color: inherit;
+        font-size: 1.05rem;
+        width: 7.2rem;
+        min-width: 6.5rem;
+        text-align: right;
+        border: none;
+        outline: none;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+    .calc-term-input {
+        background: transparent;
+        color: inherit;
+        font-size: 1.05rem;
+        width: 1.75rem;
+        text-align: right;
+        border: none;
+        outline: none;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+    .calc-currency-sign {
+        color: #b89035;
+        font-size: 1.05rem;
+        font-weight: 700;
+    }
+    .dark .calc-currency-sign {
+        color: #d4af37;
+    }
+
+    .input-badge {
+        height: 2.35rem;
+        padding: 0 0.65rem;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(180deg, #ffffff 0%, #f9f7f2 100%);
+        border: 1.5px solid rgba(195, 155, 75, 0.55);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04), 0 2px 8px -2px rgba(180, 140, 40, 0.15);
+        border-radius: 12px;
+        cursor: text;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.15s ease;
+    }
+
+    .input-badge:hover {
+        border-color: #d4af37;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03), 0 3px 12px -2px rgba(212, 175, 55, 0.35);
+        background: #ffffff;
+    }
+
+    .input-badge:focus-within {
+        border-color: #c59b27 !important;
+        background: #ffffff !important;
+        box-shadow: 0 0 0 3.5px rgba(212, 175, 55, 0.28), 0 4px 16px -2px rgba(212, 175, 55, 0.35), inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+    }
+
+    .dark .input-badge {
+        background: linear-gradient(180deg, rgba(14, 17, 24, 0.98) 0%, rgba(9, 11, 17, 0.98) 100%);
+        border: 1.5px solid rgba(212, 175, 55, 0.50);
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7), 0 0 12px rgba(212, 175, 55, 0.14);
+        border-radius: 12px;
+        cursor: text;
+    }
+
+    .dark .input-badge:hover {
+        border-color: rgba(246, 226, 122, 0.85);
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8), 0 0 18px rgba(212, 175, 55, 0.32);
+        background: rgba(18, 22, 32, 0.98);
+    }
+
+    .dark .input-badge:focus-within {
+        border-color: #f6e27a !important;
+        background: rgba(18, 22, 32, 1) !important;
+        box-shadow: 0 0 0 3.5px rgba(212, 175, 55, 0.38), 0 0 22px rgba(246, 226, 122, 0.4), inset 0 2px 6px rgba(0, 0, 0, 0.8) !important;
+    }
+
+    .input-edit-icon {
+        font-size: 0.85rem !important;
+        color: #a88334;
+        opacity: 0.65;
+        transition: opacity 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    .dark .input-edit-icon {
+        color: #d4af37;
+        opacity: 0.75;
+    }
+
+    .input-badge:hover .input-edit-icon {
+        opacity: 1;
+        transform: scale(1.1);
+        color: #b8860b;
+    }
+
+    .dark .input-badge:hover .input-edit-icon {
+        color: #f6e27a;
+    }
+
+    .input-badge:focus-within .input-edit-icon {
+        opacity: 1;
+        color: #d4af37;
+    }
+
+    .dark .input-badge:focus-within .input-edit-icon {
+        color: #f6e27a;
+    }
+
+    /* Preset Chips & Smooth Sub-Row Accordion Unfold */
+    .presets-row-base {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+    }
+
+    .presets-extra-accordion {
+        display: grid;
+        grid-template-rows: 0fr;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: grid-template-rows 0.32s cubic-bezier(0.16, 1, 0.3, 1), 
+                    opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow: hidden;
+    }
+
+    .presets-extra-accordion.open {
+        grid-template-rows: 1fr;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .presets-extra-inner {
+        min-height: 0;
+        overflow: hidden;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+    }
+
+    .preset-chip {
+        background: linear-gradient(180deg, #ffffff 0%, #f6f3eb 100%);
+        border: 1.2px solid rgba(190, 155, 80, 0.38);
+        color: #2e281f;
+        box-shadow: 0 2px 5px rgba(80, 60, 20, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1);
+        border-radius: 10px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
+        cursor: pointer;
+        outline: none !important;
+    }
+
+    .preset-chip:focus,
+    .preset-chip:focus-visible {
+        outline: none !important;
+    }
+
+    .preset-chip:hover {
+        background: linear-gradient(135deg, #ffffff 0%, #fcf4de 100%);
+        border-color: #d4af37;
+        color: #7a550d;
+        box-shadow: 0 3px 10px rgba(212, 175, 55, 0.28), inset 0 1px 0 rgba(255, 255, 255, 1);
+        transform: translateY(-1.5px);
+    }
+
+    .preset-chip:active {
+        transform: translateY(0);
+        background: #f4ecda;
+        box-shadow: 0 1px 2px rgba(80, 60, 20, 0.1);
+    }
+
+    .dark .preset-chip {
+        background: linear-gradient(180deg, rgba(28, 33, 46, 0.9) 0%, rgba(16, 19, 28, 0.95) 100%);
+        border: 1.2px solid rgba(212, 175, 55, 0.35);
+        color: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .dark .preset-chip:hover {
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.28) 0%, rgba(36, 42, 58, 0.95) 100%);
+        border-color: rgba(246, 226, 122, 0.8);
+        color: #f6e27a;
+        box-shadow: 0 3px 12px rgba(212, 175, 55, 0.35), 0 0 12px rgba(212, 175, 55, 0.25);
+        transform: translateY(-1.5px);
+    }
+
+    .dark .preset-chip:active {
+        transform: translateY(0);
+        background: rgba(212, 175, 55, 0.35);
+    }
+
+    /* Text & Theme Labels */
+    .card-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        line-height: 1.25;
+        color: #736c64;
+        transition: color 0.25s ease;
+    }
+    .dark .card-label {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .card-label-gold {
+        font-size: clamp(0.68rem, 2.3vw, 0.76rem);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        line-height: 1.2;
+        color: #736c64;
+        transition: color 0.25s ease;
+        white-space: normal;
+        word-break: normal;
+    }
+    .highlight-card .card-label-gold {
+        color: #8a6316;
+    }
+    .dark .card-label-gold,
+    .dark .highlight-card .card-label-gold {
+        color: #f6e27a !important;
+    }
+
+    .border-divider-top {
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        transition: border-color 0.25s ease;
+    }
+    .dark .border-divider-top {
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .sub-info {
+        font-size: 11px;
+        color: #8e867c;
+        font-weight: 500;
+        transition: color 0.25s ease;
+    }
+    .dark .sub-info {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Core Layout Utility Classes */
+    .w-full { width: 100%; }
+    .max-w-4xl { max-width: 57.5rem; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .justify-center { justify-content: center; }
+    .gap-1-5 { gap: 0.375rem; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-2-5 { gap: 0.625rem; }
+    .space-y-3 > * + * { margin-top: 0.75rem; }
+
+    .relative { position: relative; }
+    .absolute { position: absolute; }
+    .overflow-hidden { overflow: hidden; }
+    .shrink-0 { flex-shrink: 0; }
+    .flex-1 { flex: 1 1 0%; }
+    .min-w-0 { min-width: 0; }
+    .text-center { text-align: center; }
+    .select-none { user-select: none; }
+    .pb-6 { padding-bottom: 1.5rem; }
+
+    /* Theme Switcher Button */
+    .theme-toggle-btn {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.75);
+        border: 1.5px solid rgba(195, 155, 75, 0.40);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        transition: transform 0.15s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        outline: none !important;
+        user-select: none;
+    }
+
+    .theme-toggle-btn:hover {
+        background: rgba(255, 255, 255, 0.95);
+        border-color: #d4af37;
+        transform: scale(1.05);
+    }
+
+    .theme-toggle-btn:active {
+        transform: scale(0.92);
+    }
+
+    .dark .theme-toggle-btn {
+        background: rgba(20, 24, 34, 0.85);
+        border: 1.5px solid rgba(212, 175, 55, 0.35);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .dark .theme-toggle-btn:hover {
+        background: rgba(30, 36, 50, 0.95);
+        border-color: rgba(246, 226, 122, 0.75);
+        transform: scale(1.05);
+    }
+
+    .header-nav {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        z-index: 50;
+        background: rgba(223, 227, 232, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.80);
+        padding-top: max(0.65rem, env(safe-area-inset-top));
+        padding-bottom: 0.65rem;
+        padding-left: 0;
+        padding-right: 0;
+        transition: transform 0.3s ease, background-color 0.25s ease, border-color 0.25s ease;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    @media (min-width: 1024px) {
+        .header-nav {
+            padding-top: max(0.85rem, env(safe-area-inset-top));
+            padding-bottom: 0.85rem;
+        }
+    }
+    .header-inner {
+        width: 100%;
+        max-width: var(--layout-max-width);
+        padding-left: var(--layout-padding-x);
+        padding-right: var(--layout-padding-x);
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+    }
+    .logo-box {
+        width: 2.1rem;
+        height: 2.1rem;
+        border-radius: 0.6rem;
+        background: linear-gradient(135deg, #f8e5a3, #d4af37, #aa7a1e);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(212, 175, 55, 0.35);
+        flex-shrink: 0;
+    }
+    @media (min-width: 1024px) {
+        .logo-box {
+            width: 2.45rem;
+            height: 2.45rem;
+            border-radius: 0.7rem;
+        }
+    }
+    .logo-main-text {
+        font-weight: 800;
+        font-size: 0.95rem;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+    }
+    @media (min-width: 1024px) {
+        .logo-main-text {
+            font-size: 1.08rem;
+        }
+    }
+    .logo-sub-text {
+        font-size: 0.7rem;
+        opacity: 0.65;
+        font-weight: 600;
+    }
+    @media (min-width: 1024px) {
+        .logo-sub-text {
+            font-size: 0.76rem;
+        }
+    }
+    .dark .header-nav {
+        background: rgba(13, 15, 20, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Numeric Value Typography */
+    .stat-val-highlight {
+        font-size: clamp(1.35rem, 4vw, 1.6rem);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+    }
+    .stat-val-secondary {
+        font-size: clamp(1.25rem, 3.8vw, 1.45rem);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+    }
+
+    
+    /* Discount Badge */
+    .discount-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.15rem 0.45rem;
+        font-size: 0.72rem;
+        font-weight: 800;
+        border-radius: 6px;
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.35), rgba(246, 226, 122, 0.2));
+        border: 1px solid rgba(212, 175, 55, 0.5);
+        color: #946912;
+        margin-left: 0.35rem;
+        vertical-align: middle;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .dark .discount-badge {
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.35), rgba(246, 226, 122, 0.15));
+        border-color: rgba(246, 226, 122, 0.6);
+        color: #f6e27a;
+        box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+    }
+    @media (min-width: 1024px) {
+        .discount-badge {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.55rem;
+        }
+    }
+
+    /* Formula Selection Section Below Calculator */
+    .formula-section-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+    }
+    .formula-section-subtitle {
+        font-size: 0.76rem;
+        opacity: 0.65;
+        font-weight: 500;
+        line-height: 1.35;
+        margin-top: 0.15rem;
+    }
+    .formula-header-icon-box {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.55rem;
+        background: linear-gradient(135deg, #f7dc78, #d4af37, #b08218);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(180, 130, 20, 0.25);
+        flex-shrink: 0;
+    }
+
+    .formula-banner {
+        background: rgba(212, 175, 55, 0.12);
+        border: 1px solid rgba(195, 155, 75, 0.35);
+        border-radius: 12px;
+        padding: 0.65rem 0.95rem;
+        font-size: 0.77rem;
+        line-height: 1.45;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        color: #5d4007;
+        margin-top: 0.35rem;
+    }
+    .dark .formula-banner {
+        background: rgba(212, 175, 55, 0.10);
+        border-color: rgba(212, 175, 55, 0.28);
+        color: #f6e27a;
+    }
+
+    .formula-cards-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.85rem;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    @media (min-width: 768px) {
+        .formula-cards-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.85rem;
+        }
+    }
+
+    .formula-card {
+        background: rgba(255, 255, 255, 0.65);
+        border: 1.5px solid rgba(195, 155, 75, 0.35);
+        border-radius: 16px;
+        padding: 1.05rem 1.15rem;
+        cursor: pointer;
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+                    border-color 0.2s ease, 
+                    box-shadow 0.2s ease, 
+                    background 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 0.75rem;
+        position: relative;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+    }
+    .dark .formula-card {
+        background: rgba(22, 28, 40, 0.75);
+        border: 1.5px solid rgba(212, 175, 55, 0.25);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .formula-card:hover {
+        transform: translateY(-2px);
+        border-color: #d4af37;
+        box-shadow: 0 8px 24px rgba(212, 175, 55, 0.18);
+    }
+    .dark .formula-card:hover {
+        border-color: rgba(246, 226, 122, 0.7);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5), 0 0 14px rgba(212, 175, 55, 0.2);
+    }
+
+    .formula-card.active {
+        border-color: #c59b27;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(254, 246, 222, 0.85) 100%);
+        box-shadow: 0 8px 24px rgba(212, 175, 55, 0.28), inset 0 0 0 1px #d4af37;
+    }
+    .dark .formula-card.active {
+        border-color: #f6e27a;
+        background: linear-gradient(145deg, rgba(212, 175, 55, 0.16) 0%, rgba(24, 30, 44, 0.92) 100%);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6), 0 0 16px rgba(212, 175, 55, 0.22), inset 0 0 0 1px #f6e27a;
+    }
+
+    .formula-card-top {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+    }
+
+    .formula-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    .formula-card-title {
+        font-size: 0.92rem;
+        font-weight: 800;
+        line-height: 1.25;
+        color: #1f1b14;
+    }
+    .dark .formula-card-title {
+        color: #f4f5f7;
+    }
+    .formula-card.active .formula-card-title {
+        color: #8f640e;
+    }
+    .dark .formula-card.active .formula-card-title {
+        color: #f6e27a;
+    }
+
+    .formula-card-radio {
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 50%;
+        border: 2px solid rgba(180, 140, 40, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+        margin-top: 0.1rem;
+    }
+    .dark .formula-card-radio {
+        border-color: rgba(212, 175, 55, 0.4);
+    }
+    .formula-card.active .formula-card-radio {
+        border-color: #d4af37;
+        background: #d4af37;
+        box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+    }
+    .dark .formula-card.active .formula-card-radio {
+        border-color: #f6e27a;
+        background: #f6e27a;
+        box-shadow: 0 0 10px rgba(246, 226, 122, 0.6);
+    }
+    .formula-card-radio-dot {
+        width: 0.45rem;
+        height: 0.45rem;
+        border-radius: 50%;
+        background: #ffffff;
+        opacity: 0;
+        transform: scale(0.5);
+        transition: all 0.2s ease;
+    }
+    .dark .formula-card-radio-dot {
+        background: #121620;
+    }
+    .formula-card.active .formula-card-radio-dot {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .formula-card-desc {
+        font-size: 0.77rem;
+        line-height: 1.48;
+        color: #554e44;
+        font-weight: 500;
+    }
+    .dark .formula-card-desc {
+        color: #cbd5e1;
+    }
+
+    .formula-card-bottom {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        padding-top: 0.65rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .dark .formula-card-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .formula-preview-badge {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(212, 175, 55, 0.12);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 8px;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.73rem;
+        font-weight: 700;
+        color: #8c600d;
+        transition: all 0.2s ease;
+    }
+    .dark .formula-preview-badge {
+        background: rgba(0, 0, 0, 0.35);
+        border-color: rgba(212, 175, 55, 0.3);
+        color: #f6e27a;
+    }
+    .formula-card.active .formula-preview-badge {
+        background: rgba(212, 175, 55, 0.25);
+        border-color: #d4af37;
+        color: #694605;
+    }
+    .dark .formula-card.active .formula-preview-badge {
+        background: rgba(212, 175, 55, 0.25);
+        border-color: #f6e27a;
+        color: #fff4ba;
+    }
+
+    .formula-chip-tag {
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 0.15rem 0.45rem;
+        border-radius: 9999px;
+        background: rgba(212, 175, 55, 0.22);
+        color: #8f640e;
+        border: 1px solid rgba(212, 175, 55, 0.35);
+        display: inline-flex;
+        align-items: center;
+    }
+    .dark .formula-chip-tag {
+        background: rgba(212, 175, 55, 0.22);
+        color: #f6e27a;
+        border-color: rgba(212, 175, 55, 0.4);
+    }
+
+    /* Desktop Scaling Enhancements */
+    @media (min-width: 1024px) {
+        .calc-main-title {
+            font-size: 1.55rem;
+        }
+        .tab-toggle-container {
+            width: 225px;
+            min-width: 225px;
+            max-width: 225px;
+            padding: 4px;
+            border-radius: 0.95rem;
+        }
+        .tab-btn {
+            font-size: 0.8rem;
+            padding: 0.45rem 0.45rem;
+        }
+        .glass-panel, .highlight-card {
+            padding: 1.4rem 1.55rem !important;
+            border-radius: 22px;
+        }
+        .card-label {
+            font-size: 0.82rem;
+            letter-spacing: 0.05em;
+        }
+        .card-label-gold {
+            font-size: 0.82rem;
+        }
+        .input-badge {
+            height: 2.75rem;
+            padding: 0 0.85rem;
+            border-radius: 14px;
+        }
+        .calc-text-input {
+            font-size: 1.25rem !important;
+            width: 8.5rem !important;
+        }
+        .calc-term-input {
+            font-size: 1.25rem !important;
+            width: 2.2rem !important;
+        }
+        .calc-currency-sign {
+            font-size: 1.25rem !important;
+        }
+        .input-edit-icon {
+            font-size: 1rem !important;
+        }
+        input[type="range"] {
+            height: 6px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            height: 22px;
+            width: 22px;
+        }
+        input[type="range"]::-moz-range-thumb {
+            height: 22px;
+            width: 22px;
+        }
+        .sub-info {
+            font-size: 13px;
+        }
+        .preset-chip {
+            font-size: 12.5px !important;
+            padding: 0.35rem 0.8rem !important;
+            border-radius: 11px;
+        }
+        .result-stat-card {
+            padding: 1.25rem 1.45rem;
+            min-height: 6.8rem;
+        }
+        .stat-val-highlight {
+            font-size: 2.1rem;
+        }
+        .stat-val-secondary {
+            font-size: 1.75rem;
+        }
+        .result-watermark-icon {
+            font-size: 4.8rem !important;
+            right: 0.85rem;
+            bottom: -0.45rem;
+        }
+        .theme-toggle-btn {
+            width: 2.6rem;
+            height: 2.6rem;
+            border-radius: 0.85rem;
+        }
+    }
+
+</style>
+</head>
+<body>
+
+<!-- Ambient background glow layer -->
+<div class="bg-ambient"></div>
+
+<!-- Top Navigation Bar -->
+<header id="main-header" class="header-nav">
+    <div class="header-inner">
+        <div class="flex items-center gap-2-5">
+            <div class="logo-box">
+                <span class="material-symbols-outlined" style="color: #000; font-size: 1.25rem; font-weight: 900;">calculate</span>
+            </div>
+            <div class="flex items-center">
+                <span class="logo-main-text">Калькулятор рассрочки</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+            <!-- Theme Switcher Button -->
+            <button id="theme-toggle-btn" onclick="cycleTheme()" class="theme-toggle-btn" title="Сменить тему" aria-label="Сменить тему">
+                <span id="theme-toggle-icon" class="material-symbols-outlined" style="font-size: 1.25rem; color: #f6e27a;">light_mode</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<main class="w-full">
+<section class="calculator-layout" id="calculators">
+    <!-- Unified vertical flow: identical gap between ALL main blocks -->
+    <div class="calc-flow">
+
+        <!-- Calculator Header & Tabs (Single row: title on left, compact 200px toggle on right) -->
+        <div class="flex items-center justify-between gap-2-5 w-full">
+            <div class="flex-1 min-w-0" style="padding-right: 0.25rem;">
+                <h1 class="calc-main-title">
+                    Параметры рассрочки
+                </h1>
+            </div>
+
+            <!-- Mode Tabs Toggle (Fixed 200px) -->
+            <div class="shrink-0 select-none">
+                <div class="relative flex tab-toggle-container">
+                    <div id="tab-pill" class="tab-pill-bg"></div>
+                    <button type="button" class="tab-btn active relative flex-1" id="tab-no-down" onclick="setDownPaymentMode(false)">Без взноса</button>
+                    <button type="button" class="tab-btn relative flex-1" id="tab-with-down" onclick="setDownPaymentMode(true)">Со взносом</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculator Inputs Grid (2 Columns on Desktop, 1 Column on Mobile) -->
+        <div class="calc-inputs-grid">
+            <!-- Price Input Card -->
+            <div class="space-y-3 glass-panel" style="padding: 1.15rem;" id="price-container">
+                <div class="flex justify-between items-center gap-2">
+                    <label for="price-input" class="card-label cursor-pointer">Стоимость товара</label>
+                    <div class="input-badge shrink-0 gap-1-5" onclick="document.getElementById('price-input').focus()">
+                        <span class="material-symbols-outlined input-edit-icon" title="Нажмите, чтобы ввести сумму">edit</span>
+                        <input class="calc-text-input" id="price-input" type="text" inputmode="numeric" enterkeyhint="done" autocomplete="off" placeholder="0" value="100 000" aria-label="Стоимость товара в рублях">
+                        <span class="calc-currency-sign">₽</span>
+                    </div>
+                </div>
+                <input id="price-slider" max="100000" min="25000" step="1000" type="range" value="100000" aria-label="Стоимость товара">
+                <div class="flex justify-between sub-info">
+                    <span id="price-min-label">25 000 ₽</span>
+                    <span id="price-max-label">100 000 ₽</span>
+                </div>
+                <!-- Dynamic Quick Presets: Strictly 2 rows max (Base 4 chips + Extra 3 chips) -->
+                <div id="price-presets-container" class="border-divider-top" style="padding-top: 0.375rem;">
+                    <!-- Base Presets Row (Always visible: 4 chips) -->
+                    <div class="presets-row-base">
+                        <button type="button" onclick="setPresetPrice(35000)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">35 000 ₽</button>
+                        <button type="button" onclick="setPresetPrice(50000)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">50 000 ₽</button>
+                        <button type="button" onclick="setPresetPrice(75000)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">75 000 ₽</button>
+                        <button type="button" onclick="setPresetPrice(100000)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">100 000 ₽</button>
+                    </div>
+                    <!-- Extra Presets Row (Unfolds smoothly in "Со взносом" mode: 3 chips) -->
+                    <div id="presets-extra-row" class="presets-extra-accordion">
+                        <div class="presets-extra-inner" style="padding-top: 0.375rem;">
+                            <button type="button" onclick="setPresetPrice(1000000)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">1 000 000 ₽</button>
+                            <button type="button" onclick="setPresetPrice(2000000)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">2 000 000 ₽</button>
+                            <button type="button" onclick="setPresetPrice(3000000)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">3 000 000 ₽</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Term Input Card -->
+            <div class="space-y-3 glass-panel" style="padding: 1.15rem;" id="term-container">
+                <div class="flex justify-between items-center gap-2">
+                    <label for="term-input" class="card-label cursor-pointer">Срок рассрочки</label>
+                    <div class="input-badge shrink-0 gap-1-5" onclick="document.getElementById('term-input').focus()">
+                        <span class="material-symbols-outlined input-edit-icon" title="Нажмите, чтобы ввести срок">edit</span>
+                        <input class="calc-term-input" id="term-input" type="text" inputmode="numeric" enterkeyhint="done" autocomplete="off" placeholder="0" value="12" aria-label="Срок рассрочки в месяцах">
+                        <span class="calc-currency-sign">мес.</span>
+                    </div>
+                </div>
+                <input id="term-slider" max="12" min="3" step="1" type="range" value="12" aria-label="Срок рассрочки">
+                <div class="flex justify-between sub-info">
+                    <span>3 мес.</span>
+                    <span>12 мес.</span>
+                </div>
+                <!-- Quick Term Presets -->
+                <div class="flex border-divider-top" style="flex-wrap: wrap; gap: 0.375rem; padding-top: 0.375rem;">
+                    <button type="button" onclick="setPresetTerm(3)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">3 мес</button>
+                    <button type="button" onclick="setPresetTerm(6)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">6 мес</button>
+                    <button type="button" onclick="setPresetTerm(9)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">9 мес</button>
+                    <button type="button" onclick="setPresetTerm(12)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">12 мес</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Down Payment Card (Silky Smooth Accordion Expansion) -->
+        <div id="down-payment-wrapper" class="down-payment-wrapper">
+            <div class="down-payment-inner">
+                <div class="space-y-3 glass-panel" style="padding: 1.15rem;" id="down-payment-container">
+                    <div class="flex justify-between items-center gap-2">
+                        <label for="down-input" class="card-label cursor-pointer">Первоначальный<br>взнос</label>
+                        <div class="input-badge shrink-0 gap-1-5" onclick="document.getElementById('down-input').focus()">
+                            <span class="material-symbols-outlined input-edit-icon" title="Нажмите, чтобы ввести взнос">edit</span>
+                            <input class="calc-text-input" id="down-input" type="text" inputmode="numeric" enterkeyhint="done" autocomplete="off" placeholder="0" value="0" aria-label="Первоначальный взнос в рублях">
+                            <span class="calc-currency-sign">₽</span>
+                        </div>
+                    </div>
+                    <input id="down-slider" max="85000" min="0" step="1000" type="range" value="0" aria-label="Первоначальный взнос">
+                    <div class="flex justify-between sub-info">
+                        <span id="down-min-label">0 ₽</span>
+                        <span id="down-max-label">85 000 ₽</span>
+                    </div>
+                    <!-- Quick Down Payment Presets -->
+                    <div class="flex border-divider-top" style="flex-wrap: wrap; gap: 0.375rem; padding-top: 0.375rem;">
+                        <button type="button" onclick="setPresetDownPercent(0)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">0%</button>
+                        <button type="button" onclick="setPresetDownPercent(0.10)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">10%</button>
+                        <button type="button" onclick="setPresetDownPercent(0.20)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">20%</button>
+                        <button type="button" onclick="setPresetDownPercent(0.30)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">30%</button>
+                        <button type="button" onclick="setPresetDownPercent(0.50)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">50%</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Cards Dashboard (4 Cards on Desktop) -->
+        <div class="calc-results-grid">
+            <!-- Highlight Card (Monthly Payment) -->
+            <div class="highlight-card result-stat-card relative overflow-hidden" id="card-monthly">
+                <span class="material-symbols-outlined result-watermark-icon">event_repeat</span>
+                <div class="result-card-header relative" style="z-index: 2;">
+                    <span class="card-label-gold">Ежемесячный платеж</span>
+                </div>
+                <div class="relative" style="z-index: 2;">
+                    <p class="stat-val-highlight" id="monthly-payment">12 500 ₽</p>
+                </div>
+            </div>
+
+            <!-- Sub-grid: Discount, Markup, Total -->
+            <div class="calc-sub-results">
+                <!-- Discount Card -->
+                <div class="glass-panel result-stat-card relative overflow-hidden" id="card-discount">
+                    <span class="material-symbols-outlined result-watermark-icon">savings</span>
+                    <div class="result-card-header relative" style="z-index: 2;">
+                        <div>
+                            <span class="card-label-gold">Скидка с наценки</span>
+                            <span style="display: block; font-size: 0.62rem; opacity: 0.65; font-weight: 600; text-transform: lowercase; margin-top: 1px;">экономия на переплате</span>
+                        </div>
+                    </div>
+                    <div class="relative flex items-center justify-between" style="z-index: 2;">
+                        <p class="stat-val-secondary" id="discount-val">0 ₽</p>
+                        <span id="discount-pct-badge" class="discount-badge" style="opacity: 0.4;">0%</span>
+                    </div>
+                </div>
+
+                <!-- Markup Card -->
+                <div class="glass-panel result-stat-card relative overflow-hidden" id="card-markup">
+                    <span class="material-symbols-outlined result-watermark-icon">donut_large</span>
+                    <div class="result-card-header relative" style="z-index: 2;">
+                        <span class="card-label-gold">Наценка</span>
+                    </div>
+                    <div class="relative" style="z-index: 2;">
+                        <p class="stat-val-secondary" id="markup">50 000 ₽</p>
+                    </div>
+                </div>
+
+                <!-- Total Cost Card -->
+                <div class="glass-panel result-stat-card relative overflow-hidden" id="card-total">
+                    <span class="material-symbols-outlined result-watermark-icon">workspace_premium</span>
+                    <div class="result-card-header relative" style="z-index: 2;">
+                        <span class="card-label-gold">Итоговая стоимость</span>
+                    </div>
+                    <div class="relative" style="z-index: 2;">
+                        <p class="stat-val-secondary" id="total-cost">150 000 ₽</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Discount Formulas Interactive Comparison Section (Bottom of Calculator) -->
+        <div class="space-y-3 glass-panel" style="padding: 1.25rem 1.35rem;" id="formula-selector-section">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-2">
+                    <div class="formula-header-icon-box">
+                        <span class="material-symbols-outlined" style="font-size: 1.25rem; color: #1a1205;">functions</span>
+                    </div>
+                    <div>
+                        <h2 class="formula-section-title">Варианты начисления скидки за взнос</h2>
+                        <p class="formula-section-subtitle">Выберите модель расчета, чтобы мгновенно сравнить выгоду и платежи для клиента</p>
+                    </div>
+                </div>
+                <div id="formula-active-badge" class="formula-chip-tag" style="padding: 0.25rem 0.65rem; font-size: 0.74rem;">
+                    Выбран: <b id="formula-active-name" style="margin-left: 0.25rem;">Вариант 1 (Линейная)</b>
+                </div>
+            </div>
+
+            <!-- Clear Explanatory Banner: From what value the discount is deducted -->
+            <div class="formula-banner">
+                <span class="material-symbols-outlined" style="font-size: 1.2rem; color: #d4af37; flex-shrink: 0;">info</span>
+                <span><b>От чего считается скидка:</b> скидка вычитается <u>из наценки (переплаты)</u> за рассрочку, а не из цены самого товара. Чем выше первоначальный взнос, тем меньше наценка банка или магазина (вплоть до -50% от наценки).</span>
+            </div>
+
+            <!-- 3 Formula Comparison Cards -->
+            <div class="formula-cards-grid">
+                <!-- Model 1 Card -->
+                <div class="formula-card active" id="formula-card-1" onclick="selectFormulaModel(1)">
+                    <div class="formula-card-top">
+                        <div class="formula-card-header">
+                            <div>
+                                <span class="formula-chip-tag" style="font-size: 0.65rem; margin-bottom: 0.3rem;">Простая и честная</span>
+                                <div class="formula-card-title">Вариант 1: Плавная выгода</div>
+                            </div>
+                            <div class="formula-card-radio">
+                                <div class="formula-card-radio-dot"></div>
+                            </div>
+                        </div>
+                        <p class="formula-card-desc">
+                            Каждый внесённый рубль пропорционально уменьшает наценку (переплату). Внесли половину от максимально возможного взноса — наценка уменьшилась ровно наполовину (скидка 25% от наценки). Всё прозрачно и без сюрпризов: чем больше взнос, тем меньше переплата.
+                        </p>
+                    </div>
+                    <div class="formula-card-bottom">
+                        <div class="formula-preview-badge">
+                            <span style="opacity: 0.85;">Скидка с наценки:</span>
+                            <span id="formula-preview-val-1" style="font-family: 'Fira Code', monospace;">0% (0 ₽)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model 2 Card -->
+                <div class="formula-card" id="formula-card-2" onclick="selectFormulaModel(2)">
+                    <div class="formula-card-top">
+                        <div class="formula-card-header">
+                            <div>
+                                <span class="formula-chip-tag" style="font-size: 0.65rem; margin-bottom: 0.3rem;">Стимул платить больше</span>
+                                <div class="formula-card-title">Вариант 2: Бонус за крупный взнос</div>
+                            </div>
+                            <div class="formula-card-radio">
+                                <div class="formula-card-radio-dot"></div>
+                            </div>
+                        </div>
+                        <p class="formula-card-desc">
+                            Скидка с наценки растёт медленно при маленьком взносе, но резко подскакивает при солидном взносе (от 35–40% стоимости и выше). Это мотивирует покупателя внести больше денег сразу, чтобы максимально сбить переплату (вплоть до 50% скидки с наценки).
+                        </p>
+                    </div>
+                    <div class="formula-card-bottom">
+                        <div class="formula-preview-badge">
+                            <span style="opacity: 0.85;">Скидка с наценки:</span>
+                            <span id="formula-preview-val-2" style="font-family: 'Fira Code', monospace;">0% (0 ₽)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model 3 Card -->
+                <div class="formula-card" id="formula-card-3" onclick="selectFormulaModel(3)">
+                    <div class="formula-card-top">
+                        <div class="formula-card-header">
+                            <div>
+                                <span class="formula-chip-tag" style="font-size: 0.65rem; margin-bottom: 0.3rem;">3 понятных уровня</span>
+                                <div class="formula-card-title">Вариант 3: Три ступени скидки</div>
+                            </div>
+                            <div class="formula-card-radio">
+                                <div class="formula-card-radio-dot"></div>
+                            </div>
+                        </div>
+                        <p class="formula-card-desc">
+                            Скидка уменьшает наценку по 3 простым ступеням: взнос до 20% — скидка 10% с наценки, от 20% до 50% — скидка 30% с наценки, а от 50% взноса — максимальная скидка 50% с переплаты. Клиенту легко понять: доплатил немного до следующей ступени — переплата уменьшилась вдвое.
+                        </p>
+                    </div>
+                    <div class="formula-card-bottom">
+                        <div class="formula-preview-badge">
+                            <span style="opacity: 0.85;">Скидка с наценки:</span>
+                            <span id="formula-preview-val-3" style="font-family: 'Fira Code', monospace;">0% (0 ₽)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="text-center pb-6">
+            <p style="font-size: 0.75rem; opacity: 0.55; font-weight: 500;">Расчеты носят исключительно справочно-информационный характер.</p>
+        </div>
+
+    </div>
+</section>
+
+</main>
+
+<script>
+        // DOM Elements
+        const priceSlider = document.getElementById('price-slider');
+        const priceInput = document.getElementById('price-input');
+        const downSlider = document.getElementById('down-slider');
+        const termSlider = document.getElementById('term-slider');
+        
+        const priceContainer = document.getElementById('price-container');
+        const downPaymentContainer = document.getElementById('down-payment-container');
+        const downPaymentWrapper = document.getElementById('down-payment-wrapper');
+        const priceMinLabel = document.getElementById('price-min-label');
+        const priceMaxLabel = document.getElementById('price-max-label');
+        const downMinLabel = document.getElementById('down-min-label');
+        const downMaxLabel = document.getElementById('down-max-label');
+
+        const downInput = document.getElementById('down-input');
+        const termInput = document.getElementById('term-input');
+
+        const monthlyEl = document.getElementById('monthly-payment');
+        const markupEl = document.getElementById('markup');
+        const totalEl = document.getElementById('total-cost');
+
+        const tabPill = document.getElementById('tab-pill');
+        const tabNoDown = document.getElementById('tab-no-down');
+        const tabWithDown = document.getElementById('tab-with-down');
+
+        function updateTabUI(mode) {
+            if (tabPill) {
+                tabPill.style.transform = mode ? 'translateX(100%)' : 'translateX(0%)';
+            }
+            if (mode) {
+                tabWithDown.classList.add('active');
+                tabNoDown.classList.remove('active');
+            } else {
+                tabNoDown.classList.add('active');
+                tabWithDown.classList.remove('active');
+            }
+        }
+
+        const presetsExtraRow = document.getElementById('presets-extra-row');
+
+        function updatePresetsUI(mode) {
+            if (!presetsExtraRow) return;
+            if (mode) {
+                presetsExtraRow.classList.add('open');
+            } else {
+                presetsExtraRow.classList.remove('open');
+            }
+        }
+
+        let isWithDownPayment = false;
+        let currentPrice = 100000;
+        let currentDown = 0;
+        let currentTerm = 12;
+
+        const ratesNoDown = [0.15, 0.20, 0.25, 0.30, 0.35, 0.38, 0.43, 0.46, 0.47, 0.50];
+        const ratesWithDown = [0.12, 0.14, 0.16, 0.18, 0.22, 0.26, 0.28, 0.30, 0.33, 0.36];
+
+        function getInterpolatedRate(months, isWithDown) {
+            const rates = isWithDown ? ratesWithDown : ratesNoDown;
+            const idx = months - 3;
+            const safeIdx = Math.max(0, Math.min(9, idx));
+            return rates[safeIdx];
+        }
+
+        const MIN_PRICE = 25000;
+        const MAX_PRICE = 3000000;
+        const MAX_PRICE_NO_DOWN = 100000;
+
+        let isSliderActive = false;
+
+        function blurActiveInput() {
+            if (document.activeElement && (document.activeElement.tagName === 'INPUT' && document.activeElement.type === 'text')) {
+                document.activeElement.blur();
+            }
+        }
+
+        function handleSliderStart() {
+            isSliderActive = true;
+            blurActiveInput();
+        }
+
+        function handleSliderEnd() {
+            isSliderActive = false;
+        }
+
+        window.addEventListener('pointerup', handleSliderEnd);
+        window.addEventListener('touchend', handleSliderEnd);
+        window.addEventListener('touchcancel', handleSliderEnd);
+        window.addEventListener('mouseup', handleSliderEnd);
+
+        function setDownPaymentMode(mode, isInitial = false) {
+            blurActiveInput();
+            if (!isInitial && isWithDownPayment === mode) {
+                return;
+            }
+            isWithDownPayment = mode;
+            updateTabUI(mode);
+            updatePresetsUI(mode);
+
+            if (mode) {
+                if (downPaymentWrapper) downPaymentWrapper.classList.add('open');
+                priceSlider.max = MAX_PRICE;
+                priceMaxLabel.innerText = `${MAX_PRICE.toLocaleString('ru-RU')} ₽`;
+                priceSlider.value = currentPrice;
+                updateSliderTrack(priceSlider);
+            } else {
+                if (downPaymentWrapper) downPaymentWrapper.classList.remove('open');
+                if (currentPrice > MAX_PRICE_NO_DOWN) {
+                    currentPrice = MAX_PRICE_NO_DOWN;
+                    priceInput.value = currentPrice.toLocaleString('ru-RU');
+                }
+                priceSlider.max = MAX_PRICE_NO_DOWN;
+                priceMaxLabel.innerText = `${MAX_PRICE_NO_DOWN.toLocaleString('ru-RU')} ₽`;
+                priceSlider.value = currentPrice;
+                updateSliderTrack(priceSlider);
+
+                currentDown = 0;
+                downSlider.value = 0;
+                downInput.value = '0';
+            }
+            updateCalculator();
+        }
+
+        let priceBeforeEdit = 100000;
+        let downBeforeEdit = 0;
+        let termBeforeEdit = 12;
+
+        function handlePriceFocus() {
+            priceBeforeEdit = currentPrice;
+            priceInput.value = '';
+        }
+
+        function handlePriceInput() {
+            let digits = priceInput.value.replace(/\D/g, '');
+            priceInput.value = digits;
+            if (digits.length === 0) return;
+            let val = parseInt(digits, 10) || 0;
+            if (val > MAX_PRICE_NO_DOWN && !isWithDownPayment) {
+                currentPrice = Math.min(val, MAX_PRICE);
+                setDownPaymentMode(true);
+            }
+            let maxVal = isWithDownPayment ? MAX_PRICE : MAX_PRICE_NO_DOWN;
+            if (val > maxVal) {
+                val = maxVal;
+                priceInput.value = val;
+            }
+            currentPrice = val;
+            priceSlider.value = val >= MIN_PRICE ? val : MIN_PRICE;
+            updateCalculator(false, true, true);
+        }
+
+        function handlePriceBlur() {
+            if (isSliderActive) {
+                priceInput.value = currentPrice.toLocaleString('ru-RU');
+                return;
+            }
+            let digits = priceInput.value.replace(/\D/g, '');
+            let val = parseInt(digits, 10);
+            if (isNaN(val) || digits.length === 0) {
+                currentPrice = priceBeforeEdit;
+            } else {
+                let maxVal = isWithDownPayment ? MAX_PRICE : MAX_PRICE_NO_DOWN;
+                if (val < MIN_PRICE) val = MIN_PRICE;
+                if (val > maxVal) val = maxVal;
+                currentPrice = val;
+            }
+            priceInput.value = currentPrice.toLocaleString('ru-RU');
+            priceSlider.value = currentPrice;
+            updateCalculator(true, true, true);
+        }
+
+        function handleDownFocus() {
+            downBeforeEdit = currentDown;
+            downInput.value = '';
+        }
+
+        function handleDownInput() {
+            let digits = downInput.value.replace(/\D/g, '');
+            downInput.value = digits;
+            if (digits.length === 0) return;
+            let val = parseInt(digits, 10) || 0;
+            const maxDown = Math.round(currentPrice * 0.85);
+            if (val > maxDown) {
+                val = maxDown;
+                downInput.value = val;
+            }
+            currentDown = val;
+            downSlider.value = Math.max(0, Math.min(maxDown, val));
+            updateCalculator(false, false, true);
+        }
+
+        function handleDownBlur() {
+            if (isSliderActive) {
+                downInput.value = currentDown.toLocaleString('ru-RU');
+                return;
+            }
+            let digits = downInput.value.replace(/\D/g, '');
+            let val = parseInt(digits, 10);
+            if (isNaN(val) || digits.length === 0) {
+                currentDown = downBeforeEdit;
+            } else {
+                const maxDown = Math.round(currentPrice * 0.85);
+                if (val < 0) val = 0;
+                if (val > maxDown) val = maxDown;
+                currentDown = val;
+            }
+            downInput.value = currentDown.toLocaleString('ru-RU');
+            downSlider.value = currentDown;
+            updateCalculator(true, true, true);
+        }
+
+        function handleTermFocus() {
+            termBeforeEdit = currentTerm;
+            termInput.value = '';
+        }
+
+        function handleTermInput() {
+            let digits = termInput.value.replace(/\D/g, '');
+            termInput.value = digits;
+            if (digits.length === 0) return;
+            let val = parseInt(digits, 10) || 0;
+            if (val > 12) {
+                val = 12;
+            }
+            currentTerm = val;
+            termSlider.value = Math.max(3, Math.min(12, val));
+            updateCalculator(true, true, false);
+        }
+
+        function handleTermBlur() {
+            if (isSliderActive) {
+                termInput.value = currentTerm;
+                return;
+            }
+            let digits = termInput.value.replace(/\D/g, '');
+            let val = parseInt(digits, 10);
+            if (isNaN(val) || digits.length === 0) {
+                currentTerm = termBeforeEdit;
+            } else {
+                if (val < 3) val = 3;
+                if (val > 12) val = 12;
+                currentTerm = val;
+            }
+            termInput.value = currentTerm;
+            termSlider.value = currentTerm;
+            updateCalculator(true, true, true);
+        }
+
+        function setPresetPrice(val) {
+            blurActiveInput();
+            if (val > MAX_PRICE_NO_DOWN && !isWithDownPayment) {
+                currentPrice = val;
+                setDownPaymentMode(true);
+            }
+            if (val > MAX_PRICE) val = MAX_PRICE;
+            if (val < MIN_PRICE) val = MIN_PRICE;
+            currentPrice = val;
+            priceSlider.value = val;
+            priceInput.value = val.toLocaleString('ru-RU');
+            updateCalculator(true, true, true);
+        }
+
+        function setPresetTerm(val) {
+            blurActiveInput();
+            if (val < 3) val = 3;
+            if (val > 12) val = 12;
+            currentTerm = val;
+            termSlider.value = val;
+            termInput.value = val;
+            updateCalculator(true, true, true);
+        }
+
+        function setPresetDownPercent(pct) {
+            blurActiveInput();
+            const maxDown = Math.round(currentPrice * 0.85);
+            const targetDown = Math.round(currentPrice * pct);
+            currentDown = Math.max(0, Math.min(maxDown, targetDown));
+            downSlider.value = currentDown;
+            downInput.value = currentDown.toLocaleString('ru-RU');
+            updateCalculator(true, true, true);
+        }
+
+        function updateSliderTrack(slider) {
+            if (!slider) return;
+            const min = parseFloat(slider.min) || 0;
+            const max = parseFloat(slider.max) || 100;
+            const val = parseFloat(slider.value) || 0;
+            const percentage = max > min ? Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100)) : 0;
+            slider.style.background = `linear-gradient(to right, #b8860b 0%, #d4af37 ${percentage * 0.5}%, #f7dc78 ${percentage}%, var(--track-unfilled) ${percentage}%, var(--track-unfilled) 100%)`;
+        }
+
+        const activeValueAnimations = new WeakMap();
+
+        function animateValue(element, targetValue, suffix = ' ₽') {
+            if (!element) return;
+            const currentAttr = element.getAttribute('data-val');
+            const startValue = currentAttr !== null ? parseInt(currentAttr, 10) : targetValue;
+            element.setAttribute('data-val', targetValue);
+            
+            if (activeValueAnimations.has(element)) {
+                cancelAnimationFrame(activeValueAnimations.get(element));
+                activeValueAnimations.delete(element);
+            }
+            
+            if (isNaN(startValue) || Math.abs(targetValue - startValue) < 2) {
+                element.innerText = `${targetValue.toLocaleString('ru-RU')}${suffix}`;
+                return;
+            }
+            
+            const duration = 180;
+            const startTime = performance.now();
+            
+            function step(currentTime) {
+                const progress = Math.min((currentTime - startTime) / duration, 1);
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+                const currentVal = Math.round(startValue + (targetValue - startValue) * easeProgress);
+                element.innerText = `${currentVal.toLocaleString('ru-RU')}${suffix}`;
+                if (progress < 1) {
+                    const rafId = requestAnimationFrame(step);
+                    activeValueAnimations.set(element, rafId);
+                } else {
+                    element.innerText = `${targetValue.toLocaleString('ru-RU')}${suffix}`;
+                    activeValueAnimations.delete(element);
+                }
+            }
+            const rafId = requestAnimationFrame(step);
+            activeValueAnimations.set(element, rafId);
+        }
+
+        // --- Discount Formulas Engine & Model Selection ---
+        let selectedFormulaModel = 1; // 1: Linear, 2: Exponential, 3: Stepped
+        const MAX_DISCOUNT_PERCENT = 0.50; // 50% max discount at 85% down payment
+
+        function calculateDiscountRatio(downPayment, price, model = selectedFormulaModel) {
+            if (!isWithDownPayment || price <= 0 || downPayment <= 0) {
+                return 0;
+            }
+            const maxDown = price * 0.85;
+            const tau = Math.max(0, Math.min(1, downPayment / maxDown)); // 0 to 1
+
+            let discount = 0;
+            if (model === 1) {
+                // Model 1: Linear (50% max discount at 85% down payment)
+                discount = MAX_DISCOUNT_PERCENT * tau;
+            } else if (model === 2) {
+                // Model 2: Exponential (Accelerating above 40%)
+                discount = MAX_DISCOUNT_PERCENT * Math.pow(tau, 1.4);
+            } else if (model === 3) {
+                // Model 3: Stepped 3-tier: up to 20% down -> up to 10% disc; 20-50% down -> up to 30% disc; 50-85% down -> up to 50% disc
+                const downRatio = Math.max(0, Math.min(0.85, downPayment / price));
+                if (downRatio <= 0.20) {
+                    discount = 0.10 * (downRatio / 0.20);
+                } else if (downRatio <= 0.50) {
+                    discount = 0.10 + 0.20 * ((downRatio - 0.20) / 0.30);
+                } else {
+                    discount = 0.30 + (MAX_DISCOUNT_PERCENT - 0.30) * ((downRatio - 0.50) / 0.35);
+                }
+            }
+            return Math.max(0, Math.min(MAX_DISCOUNT_PERCENT, discount));
+        }
+
+        function selectFormulaModel(modelId) {
+            selectedFormulaModel = modelId;
+            [1, 2, 3].forEach(id => {
+                const card = document.getElementById(`formula-card-${id}`);
+                if (card) {
+                    card.classList.toggle('active', id === modelId);
+                }
+            });
+
+            const labels = {
+                1: 'Вариант 1 (Линейная)',
+                2: 'Вариант 2 (Экспонента)',
+                3: 'Вариант 3 (Ступенчатая)'
+            };
+            const activeName = document.getElementById('formula-active-name');
+            if (activeName) activeName.innerText = labels[modelId] || 'Вариант 1';
+
+            updateCalculator(false, false, false);
+        }
+
+        function updateFormulaCardsPreviews(downVal, price, baseMarkup) {
+            [1, 2, 3].forEach(id => {
+                const previewEl = document.getElementById(`formula-preview-val-${id}`);
+                if (!previewEl) return;
+                if (!isWithDownPayment || downVal <= 0 || price <= 0) {
+                    previewEl.innerText = isWithDownPayment ? '0% (0 ₽)' : 'Нужен взнос (до -50%)';
+                    previewEl.style.opacity = isWithDownPayment ? '0.7' : '0.5';
+                } else {
+                    const ratio = calculateDiscountRatio(downVal, price, id);
+                    const pct = Math.round(ratio * 100);
+                    const amount = Math.round(baseMarkup * ratio);
+                    previewEl.innerText = `${pct}% (-${amount.toLocaleString('ru-RU')} ₽)`;
+                    previewEl.style.opacity = '1';
+                }
+            });
+        }
+
+        function updateCalculator(updatePrice = true, updateDown = true, updateTerm = true) {
+            const isPriceActive = document.activeElement === priceInput;
+            const isTermActive = document.activeElement === termInput;
+            const isDownActive = document.activeElement === downInput;
+
+            // When user is typing a small intermediate price in priceInput, use at least MIN_PRICE for background calculation
+            const calcPrice = isPriceActive && currentPrice < MIN_PRICE ? (currentPrice > 0 ? MIN_PRICE : currentPrice) : currentPrice;
+            const price = Math.max(MIN_PRICE, calcPrice);
+            
+            // Strict guard for months between 3 and 12
+            const months = Math.max(3, Math.min(12, currentTerm || 3));
+            
+            if (updatePrice && !isPriceActive) {
+                priceInput.value = currentPrice.toLocaleString('ru-RU');
+            }
+            if (updateTerm && !isTermActive) {
+                termInput.value = currentTerm;
+            }
+            
+            const rate = getInterpolatedRate(months, isWithDownPayment);
+            const baseTotalCost = price + (price * rate);
+            const baseMarkup = baseTotalCost - price;
+            
+            if (isWithDownPayment) {
+                const minDown = 0;
+                // Down payment is strictly up to 85% of goods price
+                const maxDown = Math.round(price * 0.85);
+                
+                downSlider.min = minDown;
+                downSlider.max = maxDown;
+                
+                // Protect down payment from collapsing while typing price
+                if (!isPriceActive || currentPrice >= MIN_PRICE) {
+                    if (currentDown < minDown) currentDown = minDown;
+                    if (currentDown > maxDown) currentDown = maxDown;
+                }
+                
+                downSlider.value = Math.max(minDown, Math.min(maxDown, currentDown));
+                if (updateDown && !isDownActive) {
+                    downInput.value = currentDown.toLocaleString('ru-RU');
+                }
+                
+                const percent = price > 0 ? Math.round((currentDown / price) * 100) : 0;
+                downMinLabel.innerText = `0 ₽`;
+                downMaxLabel.innerText = `${maxDown.toLocaleString('ru-RU')} ₽`;
+                
+                // Calculate Dynamic Discount
+                const discountRatio = calculateDiscountRatio(currentDown, price);
+                const discountPct = Math.round(discountRatio * 100);
+                const discountAmount = Math.round(baseMarkup * discountRatio);
+                
+                const finalMarkup = Math.max(0, baseMarkup - discountAmount);
+                const finalTotalCost = price + finalMarkup;
+                const remaining = Math.max(0, finalTotalCost - currentDown);
+                const monthly = Math.round(remaining / months);
+                
+                animateValue(monthlyEl, monthly);
+                animateValue(markupEl, Math.round(finalMarkup));
+                animateValue(totalEl, Math.round(finalTotalCost));
+
+                // Update Discount Result Card
+                const discountValEl = document.getElementById('discount-val');
+                const discountBadgeEl = document.getElementById('discount-pct-badge');
+                if (discountValEl) {
+                    animateValue(discountValEl, discountAmount, ' ₽');
+                }
+                if (discountBadgeEl) {
+                    discountBadgeEl.innerText = discountPct > 0 ? `-${discountPct}%` : `0%`;
+                    discountBadgeEl.style.opacity = discountPct > 0 ? '1' : '0.4';
+                }
+
+                updateFormulaCardsPreviews(currentDown, price, baseMarkup);
+            } else {
+                const monthly = Math.round(baseTotalCost / months);
+                animateValue(monthlyEl, monthly);
+                animateValue(markupEl, Math.round(baseMarkup));
+                animateValue(totalEl, Math.round(baseTotalCost));
+
+                const discountValEl = document.getElementById('discount-val');
+                const discountBadgeEl = document.getElementById('discount-pct-badge');
+                if (discountValEl) {
+                    discountValEl.innerText = '0 ₽';
+                    discountValEl.setAttribute('data-val', '0');
+                }
+                if (discountBadgeEl) {
+                    discountBadgeEl.innerText = '0%';
+                    discountBadgeEl.style.opacity = '0.4';
+                }
+
+                updateFormulaCardsPreviews(0, price, baseMarkup);
+            }
+            
+            updateSliderTrack(priceSlider);
+            updateSliderTrack(termSlider);
+            updateSliderTrack(downSlider);
+        }
+
+        // 120 FPS RAF Coalesced Updates for Range Sliders
+        let sliderRafId = null;
+        function queueSliderUpdate() {
+            if (sliderRafId) return;
+            sliderRafId = requestAnimationFrame(() => {
+                updateCalculator(true, true, true);
+                sliderRafId = null;
+            });
+        }
+
+        // Attach Event Listeners
+        priceSlider.addEventListener('input', (e) => {
+            currentPrice = parseInt(e.target.value, 10);
+            priceInput.value = currentPrice.toLocaleString('ru-RU');
+            updateSliderTrack(priceSlider);
+            queueSliderUpdate();
+        });
+
+        downSlider.addEventListener('input', (e) => {
+            currentDown = parseInt(e.target.value, 10);
+            downInput.value = currentDown.toLocaleString('ru-RU');
+            updateSliderTrack(downSlider);
+            queueSliderUpdate();
+        });
+
+        termSlider.addEventListener('input', (e) => {
+            currentTerm = parseInt(e.target.value, 10);
+            termInput.value = currentTerm;
+            updateSliderTrack(termSlider);
+            queueSliderUpdate();
+        });
+
+        // Touch & Drag blur protection (prevents iOS keyboard/blur reverting slider value)
+        ['pointerdown', 'touchstart', 'mousedown'].forEach(evt => {
+            priceSlider.addEventListener(evt, handleSliderStart, { passive: true });
+            downSlider.addEventListener(evt, handleSliderStart, { passive: true });
+            termSlider.addEventListener(evt, handleSliderStart, { passive: true });
+        });
+
+        priceInput.addEventListener('focus', handlePriceFocus);
+        priceInput.addEventListener('input', handlePriceInput);
+        priceInput.addEventListener('blur', handlePriceBlur);
+        priceInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') priceInput.blur();
+        });
+
+        downInput.addEventListener('focus', handleDownFocus);
+        downInput.addEventListener('input', handleDownInput);
+        downInput.addEventListener('blur', handleDownBlur);
+        downInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') downInput.blur();
+        });
+
+        termInput.addEventListener('focus', handleTermFocus);
+        termInput.addEventListener('input', handleTermInput);
+        termInput.addEventListener('blur', handleTermBlur);
+        termInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') termInput.blur();
+        });
+
+        // Header auto-hide on scroll with requestAnimationFrame
+        let lastScrollY = window.scrollY;
+        let ticking = false;
+        const mainHeader = document.getElementById('main-header');
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const currentScrollY = window.scrollY;
+                    if (currentScrollY < 80) {
+                        mainHeader.style.transform = 'translateY(0)';
+                    } else if (currentScrollY > lastScrollY) {
+                        mainHeader.style.transform = 'translateY(-100%)';
+                    } else {
+                        mainHeader.style.transform = 'translateY(0)';
+                    }
+                    lastScrollY = currentScrollY;
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
+        
+        // System Theme Matching & Switcher Logic
+        const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+        function getEffectiveTheme() {
+            const manual = localStorage.getItem('finisland_theme_manual');
+            if (manual === 'dark' || manual === 'light') {
+                return manual;
+            }
+            return colorSchemeQuery.matches ? 'dark' : 'light';
+        }
+
+        function applyTheme(theme, isManual = false) {
+            const isDark = theme === 'dark';
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            // Update Meta Theme Color for mobile status bars
+            const themeColor = isDark ? '#050608' : '#dfe3e8';
+            const themeMeta = document.getElementById('theme-color-meta');
+            if (themeMeta) {
+                themeMeta.setAttribute('content', themeColor);
+            }
+
+            // Update iOS Status Bar Style
+            const appleStatusMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+            if (appleStatusMeta) {
+                appleStatusMeta.setAttribute('content', isDark ? 'black-translucent' : 'default');
+            }
+
+            // Update Switcher Icon
+            const iconContainer = document.getElementById('theme-toggle-icon');
+            if (iconContainer) {
+                iconContainer.innerText = isDark ? 'light_mode' : 'dark_mode';
+                iconContainer.style.color = isDark ? '#f6e27a' : '#9e7428';
+            }
+
+            if (isManual) {
+                localStorage.setItem('finisland_theme_manual', theme);
+            }
+
+            updateSliderTrack(priceSlider);
+            updateSliderTrack(termSlider);
+            updateSliderTrack(downSlider);
+        }
+
+        function cycleTheme() {
+            const current = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            applyTheme(next, true);
+            const btn = document.getElementById('theme-toggle-btn');
+            if (btn) btn.blur();
+        }
+
+        // Real-time listener for OS system theme switch
+        if (colorSchemeQuery && colorSchemeQuery.addEventListener) {
+            colorSchemeQuery.addEventListener('change', (e) => {
+                if (!localStorage.getItem('finisland_theme_manual')) {
+                    applyTheme(e.matches ? 'dark' : 'light', false);
+                }
+            });
+        }
+
+        // Initialize UI state
+        applyTheme(getEffectiveTheme(), false);
+
+        // Initial setup in "Без взноса" mode without triggering animation
+        setDownPaymentMode(false, true);
+</script>
+</body>
+</html>
