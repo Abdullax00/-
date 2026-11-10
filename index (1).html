@@ -1297,9 +1297,9 @@
             <!-- Mode Tabs Toggle (Fixed 200px) -->
             <div class="shrink-0 select-none">
                 <div class="relative flex tab-toggle-container">
-                    <div id="tab-pill" class="tab-pill-bg"></div>
-                    <button type="button" class="tab-btn active relative flex-1" id="tab-no-down" onclick="setDownPaymentMode(false)">Без взноса</button>
-                    <button type="button" class="tab-btn relative flex-1" id="tab-with-down" onclick="setDownPaymentMode(true)">Со взносом</button>
+                    <div id="tab-pill" class="tab-pill-bg" style="transform: translateX(100%);"></div>
+                    <button type="button" class="tab-btn relative flex-1" id="tab-no-down" onclick="setDownPaymentMode(false)">Без взноса</button>
+                    <button type="button" class="tab-btn active relative flex-1" id="tab-with-down" onclick="setDownPaymentMode(true)">Со взносом</button>
                 </div>
             </div>
         </div>
@@ -1316,10 +1316,10 @@
                         <span class="calc-currency-sign">₽</span>
                     </div>
                 </div>
-                <input id="price-slider" max="100000" min="25000" step="1000" type="range" value="100000" aria-label="Стоимость товара">
+                <input id="price-slider" max="3000000" min="25000" step="1000" type="range" value="100000" aria-label="Стоимость товара">
                 <div class="flex justify-between sub-info">
                     <span id="price-min-label">25 000 ₽</span>
-                    <span id="price-max-label">100 000 ₽</span>
+                    <span id="price-max-label">3 000 000 ₽</span>
                 </div>
                 <!-- Dynamic Quick Presets: Strictly 2 rows max (Base 4 chips + Extra 3 chips) -->
                 <div id="price-presets-container" class="border-divider-top" style="padding-top: 0.375rem;">
@@ -1331,7 +1331,7 @@
                         <button type="button" onclick="setPresetPrice(100000)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">100 000 ₽</button>
                     </div>
                     <!-- Extra Presets Row (Unfolds smoothly in "Со взносом" mode: 3 chips) -->
-                    <div id="presets-extra-row" class="presets-extra-accordion">
+                    <div id="presets-extra-row" class="presets-extra-accordion open">
                         <div class="presets-extra-inner" style="padding-top: 0.375rem;">
                             <button type="button" onclick="setPresetPrice(1000000)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">1 000 000 ₽</button>
                             <button type="button" onclick="setPresetPrice(2000000)" class="preset-chip" style="font-size: 11px; padding: 0.25rem 0.625rem;">2 000 000 ₽</button>
@@ -1367,18 +1367,18 @@
         </div>
 
         <!-- Down Payment Card (Silky Smooth Accordion Expansion) -->
-        <div id="down-payment-wrapper" class="down-payment-wrapper">
+        <div id="down-payment-wrapper" class="down-payment-wrapper open">
             <div class="down-payment-inner">
                 <div class="space-y-3 glass-panel" style="padding: 1.15rem;" id="down-payment-container">
                     <div class="flex justify-between items-center gap-2">
                         <label for="down-input" class="card-label cursor-pointer">Первоначальный<br>взнос</label>
                         <div class="input-badge shrink-0 gap-1-5" onclick="document.getElementById('down-input').focus()">
                             <span class="material-symbols-outlined input-edit-icon" title="Нажмите, чтобы ввести взнос">edit</span>
-                            <input class="calc-text-input" id="down-input" type="text" inputmode="numeric" enterkeyhint="done" autocomplete="off" placeholder="0" value="0" aria-label="Первоначальный взнос в рублях">
+                            <input class="calc-text-input" id="down-input" type="text" inputmode="numeric" enterkeyhint="done" autocomplete="off" placeholder="0" value="20 000" aria-label="Первоначальный взнос в рублях">
                             <span class="calc-currency-sign">₽</span>
                         </div>
                     </div>
-                    <input id="down-slider" max="85000" min="0" step="1000" type="range" value="0" aria-label="Первоначальный взнос">
+                    <input id="down-slider" max="85000" min="0" step="1000" type="range" value="20000" aria-label="Первоначальный взнос">
                     <div class="flex justify-between sub-info">
                         <span id="down-min-label">0 ₽</span>
                         <span id="down-max-label">85 000 ₽</span>
@@ -1608,9 +1608,9 @@
             }
         }
 
-        let isWithDownPayment = false;
+        let isWithDownPayment = true;
         let currentPrice = 100000;
-        let currentDown = 0;
+        let currentDown = 20000;
         let currentTerm = 12;
 
         const ratesNoDown = [0.15, 0.20, 0.25, 0.30, 0.35, 0.38, 0.43, 0.46, 0.47, 0.50];
@@ -2205,8 +2205,8 @@
         // Initialize UI state
         applyTheme(getEffectiveTheme(), false);
 
-        // Initial setup in "Без взноса" mode without triggering animation
-        setDownPaymentMode(false, true);
+        // Initial setup in "Со взносом" mode without triggering animation
+        setDownPaymentMode(true, true);
 </script>
 </body>
 </html>
